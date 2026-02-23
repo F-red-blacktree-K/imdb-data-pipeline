@@ -1,4 +1,4 @@
-import argparse
+﻿import argparse
 import json
 from pathlib import Path
 
@@ -9,9 +9,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Clean and standardize Top1000 crawler output for downstream analysis"
     )
-    parser.add_argument("--input", default="data/staging/top1000_ids.csv", help="Raw crawler CSV")
-    parser.add_argument("--output", default="data/processed/top1000_clean.csv", help="Cleaned output CSV")
-    parser.add_argument("--summary", default="data/reports/top1000_clean_summary.json", help="Cleaning summary JSON")
+    parser.add_argument("--input", default="data/staging/stage2/top1000_ids.csv", help="Raw crawler CSV")
+    parser.add_argument("--output", default="data/processed/stage2/top1000_clean.csv", help="Cleaned output CSV")
+    parser.add_argument("--summary", default="data/reports/stage2/top1000_clean_summary.json", help="Cleaning summary JSON")
     parser.add_argument("--preview", type=int, default=5, help="Print first N rows")
     parser.add_argument("--force", action="store_true", help="Overwrite existing output")
     return parser.parse_args()
@@ -90,3 +90,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
