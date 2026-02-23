@@ -1,4 +1,4 @@
-import argparse
+﻿import argparse
 import copy
 import csv
 import json
@@ -33,10 +33,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--sleep", type=float, default=0.25, help="Sleep seconds between API calls")
     parser.add_argument("--timeout", type=float, default=30.0, help="HTTP timeout seconds")
 
-    parser.add_argument("--out-csv", default="data/staging/top1000_ids.csv", help="Output CSV path")
-    parser.add_argument("--summary", default="data/reports/top1000_fetch_summary.json", help="Summary JSON path")
-    parser.add_argument("--sample-json", default="data/reports/top1000_api_sample.json", help="Save first API page JSON sample")
-    parser.add_argument("--schema-json", default="data/reports/top1000_api_schema_hint.json", help="Save simple JSON key-path hint")
+    parser.add_argument("--out-csv", default="data/staging/stage2/top1000_ids.csv", help="Output CSV path")
+    parser.add_argument("--summary", default="data/reports/stage2/top1000_fetch_summary.json", help="Summary JSON path")
+    parser.add_argument("--sample-json", default="data/reports/stage2/top1000_api_sample.json", help="Save first API page JSON sample")
+    parser.add_argument("--schema-json", default="data/reports/stage2/top1000_api_schema_hint.json", help="Save simple JSON key-path hint")
     parser.add_argument("--preview", type=int, default=3, help="Print first N rows")
     parser.add_argument("--force", action="store_true", help="Overwrite existing output")
     return parser.parse_args()
@@ -444,3 +444,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
