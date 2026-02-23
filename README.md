@@ -1,4 +1,4 @@
-# IMDb Data Pipeline
+﻿# IMDb Data Pipeline
 
 A reproducible IMDb data pipeline with a primary dataset track and a secondary crawler track.
 
@@ -74,37 +74,37 @@ python run_pipeline.py --stage stage2 --enrich-stage2
 Generated locally (not committed):
 
 - Primary merged dataset:
-  - `data/processed/movies_merged.csv`
+  - `data/processed/stage1/movies_merged.csv`
 - Primary reports:
-  - `data/reports/eda_summary.json`
-  - `data/reports/merged_preview.csv`
-  - `data/reports/run_summary.json`
+  - `data/reports/stage1/eda_summary.json`
+  - `data/reports/stage1/merged_preview.csv`
+  - `data/reports/stage1/run_summary.json`
 - Primary analysis:
-  - `data/analysis/genre_rating_summary.csv`
-  - `data/analysis/decade_summary.csv`
-  - `data/analysis/runtime_bin_summary.csv`
-  - `data/analysis/votes_bin_summary.csv`
-  - `data/analysis/decade_genre_top_count.csv`
-  - `data/analysis/decade_genre_top_rating.csv`
-  - `data/analysis/subset_comparison.csv`
-  - `data/analysis/robustness_summary.csv`
+  - `data/analysis/stage1/genre_rating_summary.csv`
+  - `data/analysis/stage1/decade_summary.csv`
+  - `data/analysis/stage1/runtime_bin_summary.csv`
+  - `data/analysis/stage1/votes_bin_summary.csv`
+  - `data/analysis/stage1/decade_genre_top_count.csv`
+  - `data/analysis/stage1/decade_genre_top_rating.csv`
+  - `data/analysis/stage1/subset_comparison.csv`
+  - `data/analysis/stage1/robustness_summary.csv`
 
 - Secondary crawl artifacts:
-  - `data/staging/top1000_ids.csv`
-  - `data/processed/top1000_clean.csv`
-  - `data/reports/top1000_fetch_summary.json`
-  - `data/reports/top1000_clean_summary.json`
-  - `data/reports/top1000_analysis_summary.json`
+  - `data/staging/stage2/top1000_ids.csv`
+  - `data/processed/stage2/top1000_clean.csv`
+  - `data/reports/stage2/top1000_fetch_summary.json`
+  - `data/reports/stage2/top1000_clean_summary.json`
+  - `data/reports/stage2/top1000_analysis_summary.json`
 
 - Secondary analysis:
-  - `data/analysis/top1000_enriched.csv`
-  - `data/analysis/top1000_genre_structure.csv`
-  - `data/analysis/top1000_genre_penetration.csv`
-  - `data/analysis/top1000_decade_genre_hotspots.csv`
-  - `data/analysis/top1000_votes_rating_bins.csv`
-  - `data/analysis/top1000_runtime_rating_bins.csv`
-  - `data/analysis/top1000_core_winner_profile.csv`
-  - `data/analysis/top1000_strategy_recommendation.csv`
+  - `data/analysis/stage2/top1000_enriched.csv`
+  - `data/analysis/stage2/top1000_genre_structure.csv`
+  - `data/analysis/stage2/top1000_genre_penetration.csv`
+  - `data/analysis/stage2/top1000_decade_genre_hotspots.csv`
+  - `data/analysis/stage2/top1000_votes_rating_bins.csv`
+  - `data/analysis/stage2/top1000_runtime_rating_bins.csv`
+  - `data/analysis/stage2/top1000_core_winner_profile.csv`
+  - `data/analysis/stage2/top1000_strategy_recommendation.csv`
 
 ## Notes
 
@@ -117,3 +117,4 @@ Generated locally (not committed):
 
 - Add SQLite loading and SQL report export as the next production step.
 - Load finalized outputs into SQLite and export SQL-based reports.
+
