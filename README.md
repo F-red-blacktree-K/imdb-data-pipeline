@@ -1,17 +1,17 @@
-# IMDb Data Pipeline
+﻿# IMDb Data Pipeline
 
-A reproducible IMDb data pipeline focused on dataset-based analysis, with crawler-based analysis as an independent secondary track.
+A reproducible IMDb data pipeline with a primary dataset track and a secondary crawler track.
 
 ## Project Overview
 
-This project has two tracks:
+This project has two independent tracks:
 
 1. Dataset Pipeline (primary)
-- `download -> clean_merge -> analyze_core -> (next) load_sqlite -> export reports`
+- `download_datasets.py -> clean_merge.py -> analyze_core.py -> (next) load_sqlite -> export reports`
 - Primary unbiased analysis based on official IMDb datasets.
 
 2. Crawl Pipeline (secondary)
-- `crawl_top1000 -> clean_crawl -> analyze_top1000` (independent)
+- `crawl_top1000.py -> clean_crawl.py -> analyze_top1000.py`
 - Targeted analysis for high-rated titles to study why they are well-received.
 
 Dataset analysis is the primary unbiased analysis.
@@ -22,19 +22,21 @@ Crawler analysis is a targeted high-rating subgroup study.
 - Python 3
 - pandas, matplotlib
 - requests, tqdm, beautifulsoup4
-- sqlite3 (planned next step)
+- sqlite3 (planned)
 - Git
 
 ## Project Structure
 
 - `download_datasets.py`: Download IMDb dataset files (`basics`, `ratings`) with skip/force behavior.
 - `clean_merge.py`: EDA summary + clean + merge `basics` and `ratings` by `tconst`.
-- `analyze_core.py`: Generate core analysis outputs, including full-sample vs high-confidence subset robustness comparisons.
-- `crawl_ldjson.py`: Crawl IMDb title pages and extract `application/ld+json` (secondary track).
+- `analyze_core.py`: Core analysis outputs, including full-sample vs high-confidence robustness checks.
+- `crawl_top1000.py`: Crawl IMDb Top1000 candidate list via GraphQL API.
+- `clean_crawl.py`: Clean and standardize crawler output for secondary-track analysis.
+- `analyze_top1000.py`: Advanced Top1000 winner-profile analysis.
 - `DATA_DICTIONARY.md`: Field definitions and output semantics.
-- `INTERPRETATION.md`: How to read each chart and apply robustness flags.
+- `INTERPRETATION.md`: Chart interpretation guide for Stage 1 and Stage 2.
 
-## Quick Start
+## Quick Start (Primary Track)
 
 ```bash
 pip install -r requirements.txt
@@ -43,46 +45,59 @@ python clean_merge.py --force
 python analyze_core.py
 ```
 
+## Quick Start (Secondary Track)
+
+```bash
+python crawl_top1000.py --force
+python clean_crawl.py --force
+python analyze_top1000.py
+```
+
 ## Outputs
 
 Generated locally (not committed):
 
-- Core merged dataset:
-- `data/processed/movies_merged.csv`
+- Primary merged dataset:
+  - `data/processed/movies_merged.csv`
+- Primary reports:
+  - `data/reports/eda_summary.json`
+  - `data/reports/merged_preview.csv`
+  - `data/reports/run_summary.json`
+- Primary analysis:
+  - `data/analysis/genre_rating_summary.csv`
+  - `data/analysis/decade_summary.csv`
+  - `data/analysis/runtime_bin_summary.csv`
+  - `data/analysis/votes_bin_summary.csv`
+  - `data/analysis/decade_genre_top_count.csv`
+  - `data/analysis/decade_genre_top_rating.csv`
+  - `data/analysis/subset_comparison.csv`
+  - `data/analysis/robustness_summary.csv`
 
-- EDA / run summary:
-- `data/reports/eda_summary.json`
-- `data/reports/merged_preview.csv`
-- `data/reports/run_summary.json`
+- Secondary crawl artifacts:
+  - `data/staging/top1000_ids.csv`
+  - `data/processed/top1000_clean.csv`
+  - `data/reports/top1000_fetch_summary.json`
+  - `data/reports/top1000_clean_summary.json`
+  - `data/reports/top1000_analysis_summary.json`
 
-- Analysis CSV outputs:
-- `data/analysis/genre_rating_summary.csv`
-- `data/analysis/decade_summary.csv`
-- `data/analysis/runtime_bin_summary.csv`
-- `data/analysis/votes_bin_summary.csv`
-- `data/analysis/decade_genre_top_count.csv`
-- `data/analysis/decade_genre_top_rating.csv`
-- `data/analysis/subset_comparison.csv`
-- `data/analysis/robustness_summary.csv`
-
-- Analysis chart outputs:
-- `data/analysis/chart_genre_rating_compare.png`
-- `data/analysis/chart_decade_rating_compare.png`
-- `data/analysis/chart_runtime_rating_compare.png`
-- `data/analysis/chart_votes_bin_rating_compare.png`
-- `data/analysis/chart_decade_genre_heatmap.png`
-- `data/analysis/chart_subset_comparison.png`
+- Secondary analysis:
+  - `data/analysis/top1000_enriched.csv`
+  - `data/analysis/top1000_genre_structure.csv`
+  - `data/analysis/top1000_genre_penetration.csv`
+  - `data/analysis/top1000_decade_genre_hotspots.csv`
+  - `data/analysis/top1000_votes_rating_bins.csv`
+  - `data/analysis/top1000_runtime_rating_bins.csv`
+  - `data/analysis/top1000_core_winner_profile.csv`
+  - `data/analysis/top1000_strategy_recommendation.csv`
 
 ## Notes
 
 - `--force`: rerun and overwrite existing outputs.
 - Without `--force`, scripts can skip existing outputs to save time.
-- High-confidence subset in current analysis defaults to `numVotes >= 1000`.
-- Generated data files under `data/processed`, `data/analysis`, `data/reports`, `data/staging` are local artifacts and should not be committed.
+- High-confidence subset in primary analysis defaults to `numVotes >= 1000`.
+- Generated files under `data/processed`, `data/analysis`, `data/reports`, `data/staging` are local artifacts and should not be committed.
 
 ## Next Steps
 
-- Build the crawler phase for Top 1000 high-rated titles.
-- Clean and structure crawler outputs for secondary-track analysis.
-- Analyze why top-rated titles are well-received (genre patterns, era effects, runtime and vote behavior).
+- Expand crawler field coverage (genre/titleType/runtime) directly from crawl API when available.
 - Load finalized outputs into SQLite and export SQL-based reports.
