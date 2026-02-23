@@ -1,4 +1,4 @@
-import argparse
+﻿import argparse
 from pathlib import Path
 
 import pandas as pd
@@ -11,8 +11,8 @@ VOTE_LABELS = ["0-10", "11-50", "51-100", "101-500", "501-1k", "1k-5k", "5k-10k"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate concise analysis + robustness outputs from merged IMDb data")
-    parser.add_argument("--input-csv", default="data/processed/movies_merged.csv", help="Input merged CSV")
-    parser.add_argument("--out-dir", default="data/analysis", help="Output directory")
+    parser.add_argument("--input-csv", default="data/processed/stage1/movies_merged.csv", help="Input merged CSV")
+    parser.add_argument("--out-dir", default="data/analysis/stage1", help="Output directory")
     parser.add_argument("--high-vote-threshold", type=int, default=1000, help="High-confidence threshold")
     parser.add_argument("--min-genre-titles", type=int, default=30, help="Min title count for genre comparisons")
     parser.add_argument("--min-decade-genre-titles", type=int, default=20, help="Min rows for decade-genre top-rating")
