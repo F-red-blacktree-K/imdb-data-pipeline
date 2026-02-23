@@ -1,4 +1,4 @@
-import argparse
+﻿import argparse
 import json
 import math
 from pathlib import Path
@@ -18,10 +18,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Advanced analytics for IMDb Top1000 winner profile"
     )
-    parser.add_argument("--top1000-csv", default="data/processed/top1000_clean.csv")
-    parser.add_argument("--full-csv", default="data/processed/movies_merged.csv")
-    parser.add_argument("--out-dir", default="data/analysis")
-    parser.add_argument("--reports-dir", default="data/reports")
+    parser.add_argument("--top1000-csv", default="data/processed/stage2/top1000_clean.csv")
+    parser.add_argument("--full-csv", default="data/processed/stage1/movies_merged.csv")
+    parser.add_argument("--out-dir", default="data/analysis/stage2")
+    parser.add_argument("--reports-dir", default="data/reports/stage2")
     parser.add_argument(
         "--enrich-from-stage1",
         action="store_true",
@@ -428,6 +428,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 
