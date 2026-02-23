@@ -1,4 +1,4 @@
-import argparse
+﻿import argparse
 import subprocess
 import sys
 from pathlib import Path
@@ -18,6 +18,11 @@ def parse_args() -> argparse.Namespace:
         "--enrich-stage2",
         action="store_true",
         help="Run Stage2 analysis with Stage1 enrichment (--enrich-from-stage1).",
+    )
+    parser.add_argument(
+        "--skip-sql",
+        action="store_true",
+        help="Skip SQLite load and SQL report export steps.",
     )
     return parser.parse_args()
 
@@ -60,6 +65,16 @@ def main() -> None:
     if args.stage in ("all", "stage2"):
         for name, cmd in stage2:
             run_step(name, cmd)
+
+    if not args.skip_sql:
+        run_step(
+            "Load SQLite",
+            [py, str(root / "load_sqlite.py"), "--stage", args.stage],
+        )
+        run_step(
+            "Export SQL reports",
+            [py, str(root / "query_reports.py"), "--suite", args.stage],
+        )
 
     print("\n[DONE] Pipeline finished successfully.")
 
