@@ -1,4 +1,4 @@
-import argparse
+﻿import argparse
 import json
 import time
 from pathlib import Path
@@ -10,10 +10,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Profile, clean, and merge IMDb basics + ratings by tconst"
     )
-    parser.add_argument("--basics", default="data/raw/title.basics.tsv.gz", help="Path to title.basics.tsv.gz")
-    parser.add_argument("--ratings", default="data/raw/title.ratings.tsv.gz", help="Path to title.ratings.tsv.gz")
-    parser.add_argument("--out", default="data/processed/movies_merged.csv", help="Output merged CSV path")
-    parser.add_argument("--report-dir", default="data/reports", help="Directory for EDA/report output files")
+    parser.add_argument("--basics", default="data/raw/datasets/title.basics.tsv.gz", help="Path to title.basics.tsv.gz")
+    parser.add_argument("--ratings", default="data/raw/datasets/title.ratings.tsv.gz", help="Path to title.ratings.tsv.gz")
+    parser.add_argument("--out", default="data/processed/stage1/movies_merged.csv", help="Output merged CSV path")
+    parser.add_argument("--report-dir", default="data/reports/stage1", help="Directory for EDA/report output files")
     parser.add_argument("--join-type", choices=["left", "inner"], default="left", help="Join type for basics + ratings")
     parser.add_argument(
         "--max-missing-fields",
@@ -199,3 +199,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
