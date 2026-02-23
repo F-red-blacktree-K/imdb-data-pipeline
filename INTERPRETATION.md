@@ -1,53 +1,90 @@
-# Interpretation Guide
+# Analysis Interpretation Guide
 
-This file explains how to read the analysis charts and how to use robustness checks.
+This document standardizes how analysis outputs are interpreted for reporting and interview discussion.
 
-## Core Rule
+## Interpretation Policy
 
-- Blue = `Full` (all cleaned records, includes low-vote titles)
-- Red = `High-Confidence` (`numVotes >= 1000`)
-- If `changed_flag = False`: result is robust, Full is acceptable
-- If `changed_flag = True`: result is quality-sensitive, prefer High-Confidence for conclusions
+- **Stage 1 (Dataset-wide)** focuses on market-level patterns.
+- **Stage 2 (Top1000)** focuses on winner-profile diagnostics.
+- For robustness comparisons:
+  - `Full`: all cleaned records.
+  - `High-Confidence`: higher-vote subset.
+  - If the gap is material, prioritize **High-Confidence** for decision-oriented conclusions.
 
-## Chart-by-Chart
+---
+
+## Stage 1: Dataset-wide Analysis
 
 ### `chart_genre_rating_compare.png`
-Genre mean rating comparison (Full vs High-Confidence).
-- Close blue/red bars: stable genre conclusion
-- Large gap: low-vote noise likely affects this genre
+- **Analytical objective**: Compare mean rating by genre under Full vs High-Confidence scope.
+- **Business question**: Are genre-level conclusions stable after removing low-consensus titles?
+- **Interpretation**: Small gaps indicate stable ranking; large gaps suggest sensitivity to low-vote noise.
 
 ### `chart_decade_rating_compare.png`
-Mean rating by decade (Full vs High-Confidence).
-- Early decades often show larger Full-vs-HC gaps due to low-vote/legacy sampling effects
-- If blue/red diverge, use red trend for final interpretation
+- **Analytical objective**: Evaluate long-run rating trend by decade.
+- **Business question**: Is decade trend structurally consistent across data-quality tiers?
+- **Interpretation**: Early decades may diverge due to sparse legacy voting; recent decades are typically more stable.
 
 ### `chart_runtime_rating_compare.png`
-Mean rating by runtime bins (Full vs High-Confidence).
-- Middle bins usually more stable
-- Extreme bins (very short/very long) are often more quality-sensitive
+- **Analytical objective**: Measure rating behavior across runtime bins.
+- **Business question**: Does runtime preference remain consistent after quality control?
+- **Interpretation**: Mid-runtime bins are often stable; extreme bins are sample-sensitive.
 
 ### `chart_votes_bin_rating_compare.png`
-Mean rating by vote-count bins.
-- `501-1K` is usually threshold-sensitive
-- Higher-vote bins (1K+) often align better across Full/HC and are more reliable
+- **Analytical objective**: Relate vote-scale segments to mean rating.
+- **Business question**: Are high scores supported by broad audience consensus?
+- **Interpretation**: Convergence in high-vote bins implies stronger reliability.
 
 ### `chart_decade_genre_heatmap.png`
-Decade x top-genre hotspot.
-- Cell text = most frequent genre in that decade
-- Darker color = higher title count for that decade's top genre
+- **Analytical objective**: Show decade-level dominant genre intensity.
+- **Business question**: Which genre clusters dominate each era at market scope?
+- **Interpretation**: Darker cells imply higher concentration; use as a macro-structure map.
 
 ### `chart_subset_comparison.png`
-Full vs High-Confidence summary.
-- Left panel: mean rating
-- Right panel: mean votes
-- Typical reading: ratings may be close, but HC has far stronger consensus depth
+- **Analytical objective**: Summarize Full vs High-Confidence aggregate differences.
+- **Business question**: How much does consensus filtering change global averages?
+- **Interpretation**: Similar mean rating with very different vote depth means similar central tendency but different confidence strength.
 
-## How to Decide Final Conclusion
+---
 
-1. Check `robustness_summary.csv` first.
-2. For metrics with `changed_flag = False`, Full conclusion is generally acceptable.
-3. For metrics with `changed_flag = True`, report High-Confidence result as primary and Full as context.
+## Stage 2: Top1000 Winner-Profile Analysis
 
-## Interview Short Answer
+### `chart_top1000_genre_structure.png`
+- **Analytical objective**: Quantify Top1000 genre composition by count.
+- **Business question**: Is Top1000 dominated by a narrow genre set?
+- **Interpretation**: Strong concentration indicates winner clustering.
 
-"I run Full vs High-Confidence comparisons and use `robustness_summary.csv` (`changed_flag`) to test stability. If the gap is large, I prioritize High-Confidence conclusions and treat Full as market-context only."
+### `chart_top1000_decade_genre_trend.png`
+- **Analytical objective**: Track top-genre count trajectories across decades.
+- **Business question**: How does audience preference shift over time among winner genres?
+- **Interpretation**: Persistent upward lines suggest durable demand; crossovers suggest preference rotation.
+
+### `chart_top1000_votes_rating.png`
+- **Analytical objective**: Jointly inspect mean rating and sample size across vote bins.
+- **Business question**: Are top-rated segments also high-consensus segments?
+- **Interpretation**: High rating with large sample size is a stronger signal than high rating in thin bins.
+
+### `chart_top1000_core_profile.png`
+- **Analytical objective**: Compare `Core Winners` vs `Others` on mean rating, vote volume, and runtime.
+- **Business question**: What differentiates stable winners from the rest?
+- **Interpretation**: If vote-volume gap is largest, the strongest discriminator is **consensus depth**, not rating alone.
+- **Important nuance**: This is **association**, not causation.
+
+### `chart_top1000_genre_penetration.png` *(optional; requires Stage1 enrichment)*
+- **Analytical objective**: Measure genre penetration ratio (`top1000_count / full_count`).
+- **Business question**: Which genres most efficiently convert into winners relative to market base?
+- **Interpretation**: Better than raw share because it controls for base-size effects.
+- **Run condition**: Generated only with `python analyze_top1000.py --enrich-from-stage1`.
+
+---
+
+## Recommended Reporting Sequence
+
+1. Validate stability using Stage 1 robustness outputs.
+2. Present Stage 2 winner-profile diagnostics.
+3. Convert findings into strategy using `top1000_strategy_recommendation.csv`.
+
+## Executive Summary
+
+> We separate market-level structure (Stage 1) from winner-level structure (Stage 2).
+> Stage 1 provides robust population-level signals, while Stage 2 provides targeted winner-profile diagnostics for strategy recommendations.
