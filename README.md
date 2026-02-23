@@ -1,4 +1,4 @@
-﻿# IMDb Data Pipeline
+# IMDb Data Pipeline
 
 A reproducible IMDb data pipeline with a primary dataset track and a secondary crawler track.
 
@@ -33,6 +33,7 @@ Crawler analysis is a targeted high-rating subgroup study.
 - `crawl_top1000.py`: Crawl IMDb Top1000 candidate list via GraphQL API.
 - `clean_crawl.py`: Clean and standardize crawler output for secondary-track analysis.
 - `analyze_top1000.py`: Advanced Top1000 winner-profile analysis.
+- `run_pipeline.py`: One-command orchestrator for Stage1/Stage2/all.
 - `DATA_DICTIONARY.md`: Field definitions and output semantics.
 - `INTERPRETATION.md`: Chart interpretation guide for Stage 1 and Stage 2.
 
@@ -51,6 +52,21 @@ python analyze_core.py
 python crawl_top1000.py --force
 python clean_crawl.py --force
 python analyze_top1000.py
+```
+
+
+## One-Command Pipeline
+
+```bash
+python run_pipeline.py
+```
+
+Optional modes:
+
+```bash
+python run_pipeline.py --stage stage1
+python run_pipeline.py --stage stage2
+python run_pipeline.py --stage stage2 --enrich-stage2
 ```
 
 ## Outputs
@@ -99,5 +115,5 @@ Generated locally (not committed):
 
 ## Next Steps
 
-- Expand crawler field coverage (genre/titleType/runtime) directly from crawl API when available.
+- Add SQLite loading and SQL report export as the next production step.
 - Load finalized outputs into SQLite and export SQL-based reports.
