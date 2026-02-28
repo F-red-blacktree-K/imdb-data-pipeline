@@ -1,130 +1,73 @@
 ﻿# IMDb Data Pipeline
 
-A reproducible IMDb data pipeline with a primary dataset track and a secondary crawler track.
+Reproducible IMDb ETL pipeline with two analysis tracks and SQLite reporting.
 
-## Project Overview
+## What This Project Does
 
-This project has two independent tracks:
+- Stage1 (dataset-first): `download_datasets.py -> clean_merge.py -> analyze_core.py`
+- Stage2 (crawler-first): `crawl_top1000.py -> clean_crawl.py -> analyze_top1000.py`
+- Load & report: `load_sqlite.py -> query_reports.py`
 
-1. Dataset Pipeline (primary)
-- `download_datasets.py -> clean_merge.py -> analyze_core.py`
-- Primary unbiased analysis based on official IMDb datasets.
-
-2. Crawl Pipeline (secondary)
-- `crawl_top1000.py -> clean_crawl.py -> analyze_top1000.py`
-- Targeted analysis for high-rated titles to study why they are well-received.
-
-After ET (extract/transform), the project now includes L (load):
-- `load_sqlite.py -> query_reports.py`
-- Load clean + analysis outputs into SQLite and export SQL report CSVs.
-
-Dataset analysis is the primary unbiased analysis.
-Crawler analysis is a targeted high-rating subgroup study.
-
-## Tech Stack
-
-- Python 3
-- pandas, numpy, matplotlib
-- requests, tqdm, beautifulsoup4
-- SQLite (`sqlite3`)
-- Git
-
-## Project Structure
-
-- `download_datasets.py`: Download IMDb dataset files (`basics`, `ratings`) with skip/force behavior.
-- `clean_merge.py`: EDA summary + clean + merge `basics` and `ratings` by `tconst`.
-- `analyze_core.py`: Stage1 analysis outputs, including full-sample vs high-confidence checks.
-- `crawl_top1000.py`: Crawl IMDb Top1000 candidate list via GraphQL API.
-- `clean_crawl.py`: Clean and standardize crawler output for Stage2 analysis.
-- `analyze_top1000.py`: Advanced Top1000 winner-profile analysis.
-- `load_sqlite.py`: Load Stage1/Stage2 clean + mart CSVs into SQLite.
-- `query_reports.py`: Run fixed SQL query suite and export report CSVs.
-- `run_pipeline.py`: One-command orchestrator for Stage1/Stage2/all + SQLite load + SQL reports.
-- `DATA_DICTIONARY.md`: Field definitions and output semantics.`n- `DB_SCHEMA.md`: Human-readable SQLite table/column/index guide.
-- `INTERPRETATION.md`: Chart interpretation guide for Stage1 and Stage2.
-
-## Quick Start (Stage1)
+## Quick Start
 
 ```bash
 pip install -r requirements.txt
-python download_datasets.py
-python clean_merge.py --force
-python analyze_core.py
+python run_pipeline.py
 ```
 
-## Quick Start (Stage2)
+## Common Runs
 
-```bash
-python crawl_top1000.py --force
-python clean_crawl.py --force
-python analyze_top1000.py
-```
-
-## Load to SQLite + SQL Reports
-
-```bash
-python load_sqlite.py --stage all
-python query_reports.py --suite all
-```
-
-Optional:
-
-```bash
-python load_sqlite.py --stage stage1
-python load_sqlite.py --stage stage2
-python load_sqlite.py --stage all --if-exists append
-python load_sqlite.py --stage all --no-with-marts
-
-python query_reports.py --suite stage1
-python query_reports.py --suite stage2
-```
-
-## One-Command Pipeline
+### Full pipeline (recommended)
 
 ```bash
 python run_pipeline.py
 ```
 
-Optional modes:
+### Stage1 only
 
 ```bash
 python run_pipeline.py --stage stage1
+```
+
+### Stage2 only (pure Stage2)
+
+```bash
 python run_pipeline.py --stage stage2
+```
+
+### Stage2 with Stage1 enrichment (optional)
+
+```bash
 python run_pipeline.py --stage stage2 --enrich-stage2
+```
+
+### Skip SQLite + SQL export (optional)
+
+```bash
 python run_pipeline.py --skip-sql
 ```
 
-## Outputs
+## Important Outputs
 
-Generated locally (not committed):
+- Stage1 merged data: `data/processed/stage1/movies_merged.csv`
+- Stage1 marts: `data/analysis/stage1/genre_rating_summary.csv`, `decade_summary.csv`, `runtime_bin_summary.csv`, `votes_bin_summary.csv`
+- Stage2 cleaned data: `data/processed/stage2/top1000_clean.csv`
+- Stage2 core outputs: `data/analysis/stage2/top1000_enriched.csv`, `top1000_genre_structure.csv`, `top1000_votes_rating_bins.csv`, `top1000_core_winner_profile.csv`, `top1000_strategy_recommendation.csv`
+- SQLite DB: `data/db/imdb_pipeline.db`
+- SQL reports: `data/reports/sql/*.csv`
 
-- Stage1 clean + analysis:
-  - `data/processed/stage1/movies_merged.csv`
-  - `data/analysis/stage1/*.csv`
-  - `data/analysis/stage1/*.png`
-  - `data/reports/stage1/*.json`
+## Project Files (Core)
 
-- Stage2 clean + analysis:
-  - `data/staging/stage2/top1000_ids.csv`
-  - `data/processed/stage2/top1000_clean.csv`
-  - `data/analysis/stage2/*.csv`
-  - `data/analysis/stage2/*.png`
-  - `data/reports/stage2/*.json`
+- `run_pipeline.py`: one-command orchestrator
+- `load_sqlite.py`: load Stage1/Stage2 tables into SQLite
+- `query_reports.py`: export fixed SQL query reports
+- `sql/schema.sql`: SQLite schema reference
+- `sql/queries.sql`: SQL query reference examples
+- `DATA_DICTIONARY.md`: field definitions
+- `DB_SCHEMA.md`: table/index guide
+- `INTERPRETATION.md`: chart interpretation guide
 
-- SQLite load + SQL reports:
-  - `data/db/imdb_pipeline.db`
-  - `data/reports/load_summary.json`
-  - `data/reports/sql/*.csv`
-  - `data/reports/sql/query_reports_summary.json`
 
-## Notes
+## Next Step (Engineering Focus)
 
-- `--force`: rerun and overwrite existing outputs.
-- Without `--force`, scripts can skip existing outputs to save time.
-- `load_sqlite.py` checks required source CSVs and fails with a clear prerequisite hint if missing.
-- Generated files under `data/` are local artifacts and should not be committed.
-
-## Next Steps
-
-- Add MySQL version of load/query modules after SQLite interview demo is stable.
-- Add dashboard layer (BI/notebook) on top of `data/db/imdb_pipeline.db`.
+Current features are complete. Next, prioritize code and performance optimization: improve speed, stability, resource efficiency, and maintainability; reduce duplicated logic and I/O; improve readability and modularity; keep outputs unchanged.
